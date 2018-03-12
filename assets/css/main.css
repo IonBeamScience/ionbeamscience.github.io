@@ -1678,8 +1678,7 @@
 			transition: none !important;
 		}
 
-/* Type */
-	/*自定义开始*/
+/* Type *//*可自定义*/
 	body, input, select, textarea {
 		color: #666666;	/* 原来颜色#585858*/
 		font-family: "Open Sans", Helvetica, sans-serif; /*原来字体库Source Sans Pro*/
@@ -1704,7 +1703,6 @@
 			}
 
 		}
-	/*自定义结束*/
 
 	a {
 		-moz-transition: border-bottom-color 0.2s ease, color 0.2s ease;
@@ -1976,6 +1974,7 @@
 
 			ul.alt li {
 				border-top: solid 1px #c9c9c9;
+				/*rgb语法：  border-top: solid 1px rgba(210, 215, 217, 0.75);  */
 				padding: 0.5em 0;
 			}
 
@@ -3078,6 +3077,10 @@
 			overflow-y: auto;
 		}
 
+
+
+
+
 			#menu > .inner > ul {
 				list-style: none;
 				margin: 0 0 1em 0;
@@ -3101,6 +3104,13 @@
 						border-top: 0;
 						margin-top: -1em;
 					}
+
+
+.nav-item.nav-show ul{display: block;}
+.nav-item>a:before{content: "";position: absolute;left: 0px;width: 2px;height: 46px;background: #34A0CE;opacity:0;transition: all .3s;}
+
+
+
 
 		#menu > .close {
 			-moz-transition: opacity 0.45s ease, -moz-transform 0.45s ease;
@@ -3188,6 +3198,9 @@
 					}
 
 		}
+
+
+
 
 	body.is-menu-visible #wrapper {
 		-moz-pointer-events: none;

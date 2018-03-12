@@ -1,289 +1,3 @@
-<<<<<<< HEAD
-/*
-	Editorial by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
-
-(function($) {
-
-	skel.breakpoints({
-		xlarge: '(max-width: 1680px)',
-		large: '(max-width: 1280px)',
-		medium: '(max-width: 980px)',
-		small: '(max-width: 736px)',
-		xsmall: '(max-width: 480px)',
-		'xlarge-to-max': '(min-width: 1681px)',
-		'small-to-xlarge': '(min-width: 481px) and (max-width: 1680px)'
-	});
-
-	$(function() {
-
-		var	$window = $(window),
-			$head = $('head'),
-			$body = $('body');
-
-		// Disable animations/transitions ...
-
-			// ... until the page has loaded.
-				$body.addClass('is-loading');
-
-				$window.on('load', function() {
-					setTimeout(function() {
-						$body.removeClass('is-loading');
-					}, 100);
-				});
-
-			// ... when resizing.
-				var resizeTimeout;
-
-				$window.on('resize', function() {
-
-					// Mark as resizing.
-						$body.addClass('is-resizing');
-
-					// Unmark after delay.
-						clearTimeout(resizeTimeout);
-
-						resizeTimeout = setTimeout(function() {
-							$body.removeClass('is-resizing');
-						}, 100);
-
-				});
-
-		// Fix: Placeholder polyfill.
-			$('form').placeholder();
-
-		// Prioritize "important" elements on medium.
-			skel.on('+medium -medium', function() {
-				$.prioritize(
-					'.important\\28 medium\\29',
-					skel.breakpoint('medium').active
-				);
-			});
-
-		// Fixes.
-
-			// Object fit images.
-				if (!skel.canUse('object-fit')
-				||	skel.vars.browser == 'safari')
-					$('.image.object').each(function() {
-
-						var $this = $(this),
-							$img = $this.children('img');
-
-						// Hide original image.
-							$img.css('opacity', '0');
-
-						// Set background.
-							$this
-								.css('background-image', 'url("' + $img.attr('src') + '")')
-								.css('background-size', $img.css('object-fit') ? $img.css('object-fit') : 'cover')
-								.css('background-position', $img.css('object-position') ? $img.css('object-position') : 'center');
-
-					});
-
-		// Sidebar.
-			var $sidebar = $('#sidebar'),
-				$sidebar_inner = $sidebar.children('.inner');
-
-			// Inactive by default on <= large.
-				skel
-					.on('+large', function() {
-						$sidebar.addClass('inactive');
-					})
-					.on('-large !large', function() {
-						$sidebar.removeClass('inactive');
-					});
-
-			// Hack: Workaround for Chrome/Android scrollbar position bug.
-				if (skel.vars.os == 'android'
-				&&	skel.vars.browser == 'chrome')
-					$('<style>#sidebar .inner::-webkit-scrollbar { display: none; }</style>')
-						.appendTo($head);
-
-			// Toggle.
-				if (skel.vars.IEVersion > 9) {
-
-					$('<a href="#sidebar" class="toggle">Toggle</a>')
-						.appendTo($sidebar)
-						.on('click', function(event) {
-
-							// Prevent default.
-								event.preventDefault();
-								event.stopPropagation();
-
-							// Toggle.
-								$sidebar.toggleClass('inactive');
-
-						});
-
-				}
-
-			// Events.
-
-				// Link clicks.
-					$sidebar.on('click', 'a', function(event) {
-
-						// >large? Bail.
-							if (!skel.breakpoint('large').active)
-								return;
-
-						// Vars.
-							var $a = $(this),
-								href = $a.attr('href'),
-								target = $a.attr('target');
-
-						// Prevent default.
-							event.preventDefault();
-							event.stopPropagation();
-
-						// Check URL.
-							if (!href || href == '#' || href == '')
-								return;
-
-						// Hide sidebar.
-							$sidebar.addClass('inactive');
-
-						// Redirect to href.
-							setTimeout(function() {
-
-								if (target == '_blank')
-									window.open(href);
-								else
-									window.location.href = href;
-
-							}, 500);
-
-					});
-
-				// Prevent certain events inside the panel from bubbling.
-					$sidebar.on('click touchend touchstart touchmove', function(event) {
-
-						// >large? Bail.
-							if (!skel.breakpoint('large').active)
-								return;
-
-						// Prevent propagation.
-							event.stopPropagation();
-
-					});
-
-				// Hide panel on body click/tap.
-					$body.on('click touchend', function(event) {
-
-						// >large? Bail.
-							if (!skel.breakpoint('large').active)
-								return;
-
-						// Deactivate.
-							$sidebar.addClass('inactive');
-
-					});
-
-			// Scroll lock.
-			// Note: If you do anything to change the height of the sidebar's content, be sure to
-			// trigger 'resize.sidebar-lock' on $window so stuff doesn't get out of sync.
-
-				$window.on('load.sidebar-lock', function() {
-
-					var sh, wh, st;
-
-					// Reset scroll position to 0 if it's 1.
-						if ($window.scrollTop() == 1)
-							$window.scrollTop(0);
-
-					$window
-						.on('scroll.sidebar-lock', function() {
-
-							var x, y;
-
-							// IE<10? Bail.
-								if (skel.vars.IEVersion < 10)
-									return;
-
-							// <=large? Bail.
-								if (skel.breakpoint('large').active) {
-
-									$sidebar_inner
-										.data('locked', 0)
-										.css('position', '')
-										.css('top', '');
-
-									return;
-
-								}
-
-							// Calculate positions.
-								x = Math.max(sh - wh, 0);
-								y = Math.max(0, $window.scrollTop() - x);
-
-							// Lock/unlock.
-								if ($sidebar_inner.data('locked') == 1) {
-
-									if (y <= 0)
-										$sidebar_inner
-											.data('locked', 0)
-											.css('position', '')
-											.css('top', '');
-									else
-										$sidebar_inner
-											.css('top', -1 * x);
-
-								}
-								else {
-
-									if (y > 0)
-										$sidebar_inner
-											.data('locked', 1)
-											.css('position', 'fixed')
-											.css('top', -1 * x);
-
-								}
-
-						})
-						.on('resize.sidebar-lock', function() {
-
-							// Calculate heights.
-								wh = $window.height();
-								sh = $sidebar_inner.outerHeight() + 30;
-
-							// Trigger scroll.
-								$window.trigger('scroll.sidebar-lock');
-
-						})
-						.trigger('resize.sidebar-lock');
-
-					});
-
-		// Menu.
-			var $menu = $('#menu'),
-				$menu_openers = $menu.children('ul').find('.opener');
-
-			// Openers.
-				$menu_openers.each(function() {
-
-					var $this = $(this);
-
-					$this.on('click', function(event) {
-
-						// Prevent default.
-							event.preventDefault();
-
-						// Toggle.
-							$menu_openers.not($this).removeClass('active');
-							$this.toggleClass('active');
-
-						// Trigger resize (sidebar lock).
-							$window.triggerHandler('resize.sidebar-lock');
-
-					});
-
-				});
-
-	});
-
-=======
 /*
 	Phantom by HTML5 UP
 	html5up.net | @ajlkn
@@ -389,8 +103,17 @@
 			});
 
 		// Menu.
-			var $menu = $('#menu');
 
+			var $menu = $('#menu');
+			// $可以是个函数，也可以是个对象，它具体是什么意思，取决于你所引用的框架是怎么定义$的。
+			// 比如：如果你引用的是jquery框架。那么$("menu")表示，名为menu的元素对象。即<menu>***</menu>。
+			// 楼上说的id为menu的元素，则表示为$("#menu")
+			// 你可以这样理解：
+			// 				  $=document.getElmentById;
+			// 				  var a=$("menu");
+			// 				  相当于：
+			// 				  var a=document.getElmentById("menu");
+				  
 			$menu.wrapInner('<div class="inner"></div>');
 
 			$menu._locked = false;
@@ -431,6 +154,7 @@
 
 			};
 
+			//================若没有此段代码，点击menu后，弹出的菜单会跟正文一样蒙上一层灰板 
 			$menu
 				.appendTo($body)
 				.on('click', function(event) {
@@ -456,7 +180,7 @@
 
 				})
 				.append('<a class="close" href="#menu">Close</a>');
-
+			//================若没有此段代码，点击menu后，菜单不弹出
 			$body
 				.on('click', 'a[href="#menu"]', function(event) {
 
@@ -467,21 +191,40 @@
 						$menu._toggle();
 
 				})
-				.on('click', function(event) {
+				// .on('click', function(event) {
 
-					// Hide.
-						$menu._hide();
+				// 	// Hide.
+				// 		$menu._hide();
 
-				})
-				.on('keydown', function(event) {
+				// })
+				// .on('keydown', function(event) {
 
-					// Hide on escape.
-						if (event.keyCode == 27)
-							$menu._hide();
+				// 	// Hide on escape.
+				// 		if (event.keyCode == 27)
+				// 			$menu._hide();
 
-				});
+				// });
+
+
+
+		    // nav收缩展开
+		    $('.nav-item>a').on('click',function(){
+		        if (!$('.nav').hasClass('nav-mini')) {
+		            if ($(this).next().css('display') == "none") {
+		                //展开未展开
+		                $('.nav-item').children('ul').slideUp(300);
+		                $(this).next('ul').slideDown(300);
+		                $(this).parent('li').addClass('nav-show').siblings('li').removeClass('nav-show');
+		            }else{
+		                //收缩已展开
+		                $(this).next('ul').slideUp(300);
+		                $('.nav-item.nav-show').removeClass('nav-show');
+		            }
+		        }
+		    });
+
+    
 
 	});
 
->>>>>>> test
 })(jQuery);
